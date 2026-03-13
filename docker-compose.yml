@@ -1,0 +1,59 @@
+services:
+  simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile.simulator
+    container_name: rag-alerts-simulator
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  enricher:
+    build:
+      context: .
+      dockerfile: Dockerfile.enricher
+    container_name: rag-alerts-enricher
+    env_file:
+      - .env
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: rag-alerts-prometheus
+    depends_on:
+      - simulator
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observability/prometheus/alerts:/etc/prometheus/alerts:ro
+      - prometheus-data:/prometheus
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.2.2
+    container_name: rag-alerts-grafana
+    depends_on:
+      - prometheus
+      - enricher
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  grafana-data:

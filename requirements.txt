@@ -1,0 +1,8 @@
+faiss-cpu
+flask
+numpy
+openai
+prometheus-client
+python-dotenv
+sentence-transformers
+typer

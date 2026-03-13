@@ -1,0 +1,16 @@
+{
+  "alert_id": "ALERT-2026-003",
+  "service": "checkout",
+  "title": "Checkout latency above SLO",
+  "description": "Checkout p95 latency crossed 2.5s for 10 minutes and payment timeout errors are increasing.",
+  "metrics": [
+    "checkout_request_latency_p95_seconds=2.73",
+    "payment_gateway_timeout_rate=0.09",
+    "checkout_pod_cpu_utilization=0.94"
+  ],
+  "labels": {
+    "cluster": "prod-eu-1",
+    "severity": "warning",
+    "team": "payments-platform"
+  }
+}

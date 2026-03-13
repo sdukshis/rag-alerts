@@ -1,0 +1,24 @@
+groups:
+  - name: rag-alerts
+    rules:
+      # Fires when enrichment quality drops below threshold for 5 minutes.
+      - alert: RAGAlertEnrichmentQualityLow
+        expr: avg_over_time(rag_alert_enrichment_score[5m]) < 0.45
+        for: 5m
+        labels:
+          severity: warning
+          source: rag
+        annotations:
+          summary: "RAG enrichment quality is low"
+          description: "Average enrichment score is below 0.45 for 5 minutes."
+
+      # Fires when too many alerts cannot be enriched.
+      - alert: RAGAlertEnrichmentFailuresHigh
+        expr: increase(rag_alert_enrichment_failures_total[10m]) > 3
+        for: 2m
+        labels:
+          severity: critical
+          source: rag
+        annotations:
+          summary: "RAG enrichment failures are increasing"
+          description: "More than 3 enrichment failures in the last 10 minutes."
