@@ -9,12 +9,12 @@ description = "Workshop demo: enriching observability alerts with RAG"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "faiss-cpu",
     "flask",
     "numpy",
     "openai",
     "prometheus-client",
     "python-dotenv",
+    "qdrant-client",
     "sentence-transformers",
     "typer",
 ]

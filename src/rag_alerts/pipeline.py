@@ -10,7 +10,7 @@ from rag_alerts.llm import generate_enrichment
 from rag_alerts.models import Alert, EnrichmentResult, Incident, RetrievedIncident
 from rag_alerts.prompts import build_enrichment_prompt
 from rag_alerts.reranker import Reranker
-from rag_alerts.vector_index import build_index, load_index, save_index, search
+from rag_alerts.vector_index import build_index, collection_exists, load_index, save_index, search
 
 
 class RAGAlertPipeline:
@@ -29,7 +29,9 @@ class RAGAlertPipeline:
 
     @property
     def index_path(self) -> Path:
-        return self.index_dir / "incidents.faiss"
+        # Marker file for Qdrant-backed vector index readiness.
+        # Collection name is derived from `path.stem` => "incidents".
+        return self.index_dir / "incidents.qdrant"
 
     def build(self) -> int:
         started = time.perf_counter()
@@ -77,8 +79,8 @@ class RAGAlertPipeline:
         )
         try:
             incidents = self._load_incidents()
-            if not self.index_path.exists():
-                raise FileNotFoundError(f"Vector index not found: {self.index_path}")
+            if not collection_exists(self.index_path):
+                raise FileNotFoundError(f"Vector collection not found for index_path={self.index_path}")
             index = load_index(self.index_path)
 
             t_retrieve_started = time.perf_counter()

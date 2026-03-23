@@ -9,6 +9,7 @@ from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_
 
 from rag_alerts.models import Alert, EnrichmentResult, RetrievedIncident
 from rag_alerts.pipeline import RAGAlertPipeline
+from rag_alerts.vector_index import collection_exists
 
 API_REQUESTS_TOTAL = Counter(
     "rag_alert_api_requests_total",
@@ -99,7 +100,7 @@ def create_enrichment_app(
 
     def ensure_index_ready() -> None:
         active_pipeline = get_pipeline()
-        if not active_pipeline.index_path.exists():
+        if not collection_exists(active_pipeline.index_path):
             active_pipeline.build()
 
     def remember_latest(source: str, alert: Alert, result: EnrichmentResult) -> None:

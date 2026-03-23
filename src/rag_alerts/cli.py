@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from rag_alerts.http_service import create_enrichment_app
 from rag_alerts.models import Alert, EnrichmentResult
 from rag_alerts.pipeline import RAGAlertPipeline
+from rag_alerts.vector_index import collection_exists
 
 app = typer.Typer(help="RAG alert enrichment workshop CLI")
 ROOT = Path(__file__).resolve().parents[2]
@@ -37,7 +38,7 @@ def build_index() -> None:
 def _enrich_alert(alert_file: Path, top_k: int, rerank_k: int) -> EnrichmentResult:
     load_dotenv()
     pipeline = RAGAlertPipeline(data_dir=DATA_DIR, index_dir=INDEX_DIR)
-    if not pipeline.index_path.exists():
+    if not collection_exists(pipeline.index_path):
         _build_index()
 
     alert = _load_alert(alert_file)
