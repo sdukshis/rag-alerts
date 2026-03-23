@@ -11,7 +11,10 @@ class EmbeddingModel:
         self.api_key = os.getenv("OPENAI_API_KEY", "").strip()
         if not self.api_key:
             raise ValueError("OPENAI_API_KEY is required for OpenAI embeddings.")
-        self.client = OpenAI(api_key=self.api_key)
+        base_url = os.getenv("OPENAI_BASE_URL")
+        if not base_url:
+            raise ValueError("OPENAI_BASE_URL is required for OpenAI API.")
+        self.client = OpenAI(api_key=self.api_key, base_url=base_url)
 
     def encode(self, texts: List[str]) -> np.ndarray:
         response = self.client.embeddings.create(model=self.model_name, input=texts)

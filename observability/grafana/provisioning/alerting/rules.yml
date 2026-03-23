@@ -4,7 +4,7 @@ groups:
   - orgId: 1
     name: rag_enrichment_rules
     folder: RAG Alerts
-    interval: 30s
+    interval: 10s
     rules:
       - uid: rag_incident_active
         title: RAG Incident Active (Grafana)
@@ -85,7 +85,7 @@ groups:
               type: threshold
         noDataState: NoData
         execErrState: Error
-        for: 1m
+        for: 0s
         annotations:
           summary: Synthetic incident is active
           description: One or more incident profiles are active in the simulator.
