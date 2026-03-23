@@ -15,8 +15,21 @@ services:
     container_name: rag-alerts-enricher
     env_file:
       - .env
+    environment:
+      QDRANT_URL: http://qdrant:6333
+    depends_on:
+      - qdrant
     ports:
       - "8081:8081"
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant:v1.14.1
+    container_name: rag-alerts-qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
     restart: unless-stopped
 
   prometheus:
@@ -57,3 +70,4 @@ services:
 volumes:
   prometheus-data:
   grafana-data:
+  qdrant-data:
