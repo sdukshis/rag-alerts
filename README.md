@@ -44,6 +44,11 @@ Optional for LLM enrichment:
 
 - Set `OPENAI_API_KEY` in `.env`
 
+Embedding backend (for semantic search):
+
+- Set `USE_EMBEDDINGS_API=false` to use a local HuggingFace `sentence-transformers` model instead of OpenAI embeddings.
+- Optionally set `HF_EMBEDDING_MODEL` to change the HuggingFace model (default: `sentence-transformers/all-MiniLM-L6-v2`).
+
 ### 4) Build vector index
 
 ```bash
